@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<!-- saved from url=(0054)file:///Users/amrit/Downloads/sparkle_dashboard_2.html -->
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+<html lang="en">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sparkle AirPower — Sales Dashboard</title>
-<link href="./index_files/css2" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#f5f6f8;--bg2:#ffffff;--bg3:#eef0f4;
@@ -18,7 +18,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .header-inner{display:flex;align-items:center;justify-content:space-between;height:56px;max-width:1200px;margin:0 auto;}
 .logo img{height:32px;width:auto;display:block;object-fit:contain;object-position:left center;}
 .date-badge{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);background:var(--bg3);border:1px solid var(--border);padding:4px 10px;border-radius:20px;}
-.tabs{background:var(--bg2);border-bottom:1px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.tabs{background:var(--bg2);border-bottom:1px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;position:relative;z-index:10;}
 .tabs::-webkit-scrollbar{display:none;}
 .tabs-inner{display:flex;max-width:1200px;margin:0 auto;padding:0 16px;}
 .tab{flex-shrink:0;padding:12px 16px;font-size:13px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;}
@@ -103,55 +103,54 @@ tr:hover td{background:#f9fafb;}
 .sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;}
 .sec-title{font-size:15px;font-weight:600;color:var(--text);}
 
-@media print{body{background:#fff;}.header .date-badge,.tabs,.toolbar{display:none!important;}.section{display:block!important;}td,th{border-color:#e5e7eb!important;}}
+@media print{body{background:#fff;}.header .date-badge,.tabs,.toolbar{display:none!important;}td,th{border-color:#e5e7eb!important;}}
 </style>
 </head>
 <body>
 
 <div class="header">
   <div class="header-inner">
-    <div class="logo"><img id="logo-img" alt="Sparkle AirPower" onerror="this.style.display=&#39;none&#39;;document.getElementById(&#39;logo-text&#39;).style.display=&#39;block&#39;"><span id="logo-text" style="display:none;font-size:18px;font-weight:700;color:#1a7fe8;font-family:Arial,sans-serif;">Sparkle AirPower</span></div>
+    <div class="logo"><img id="logo-img" alt="Sparkle AirPower" onerror="this.style.display='none';document.getElementById('logo-text').style.display='block'"/><span id="logo-text" style="display:none;font-size:18px;font-weight:700;color:#1a7fe8;font-family:Arial,sans-serif;">Sparkle AirPower</span></div>
     <div class="date-badge" id="live-date"></div>
   </div>
 </div>
 
 <div class="tabs">
   <div class="tabs-inner">
-    <div class="tab active" onclick="showTab(&#39;spa&#39;,this)">SPAs</div>
-    <div class="tab" onclick="showTab(&#39;ooh&#39;,this)">Order on Hand</div>
-    <div class="tab" onclick="showTab(&#39;invoiced&#39;,this)">Order Invoiced</div>
-    <div class="tab" onclick="showTab(&#39;stock&#39;,this)">Stock</div>
-    <div class="tab" onclick="showTab(&#39;co&#39;,this)">Customer Orders</div>
-    <div class="tab" onclick="showTab(&#39;outstanding&#39;,this)">Mkt. Outstanding</div>
+    <div class="tab active" id="tab-spa" onclick="showTab('spa')">SPAs</div>
+    <div class="tab" id="tab-ooh" onclick="showTab('ooh')">Order on Hand</div>
+    <div class="tab" id="tab-invoiced" onclick="showTab('invoiced')">Order Invoiced</div>
+    <div class="tab" id="tab-stock" onclick="showTab('stock')">Stock</div>
+    <div class="tab" id="tab-co" onclick="showTab('co')">Customer Orders</div>
+    <div class="tab" id="tab-outstanding" onclick="showTab('outstanding')">Mkt. Outstanding</div>
   </div>
 </div>
 
-<div id="loader" style="display:none;position:fixed;top:56px;left:0;width:100%;height:calc(100% - 56px);background:rgba(245,246,248,0.95);z-index:200;align-items:center;justify-content:center;flex-direction:column;gap:12px;">
-  <div style="width:36px;height:36px;border:3px solid #e5e7eb;border-top-color:#1a7fe8;border-radius:50%;animation:spin .7s linear infinite;"></div>
-  <div style="font-size:13px;color:#6b7280;">Loading latest data...</div>
+<div id="loader" style="display:none;position:fixed;bottom:16px;right:16px;background:#1a7fe8;color:#fff;padding:8px 14px;border-radius:20px;font-size:12px;font-family:Arial,sans-serif;z-index:200;align-items:center;gap:8px;box-shadow:0 2px 8px rgba(0,0,0,0.15);">
+  <div style="width:14px;height:14px;border:2px solid rgba(255,255,255,0.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;"></div>
+  <span>Loading data...</span>
 </div>
 <style>@keyframes spin{to{transform:rotate(360deg);}}</style>
-<div id="dash-content">
 <div class="main">
 
 <!-- SPAs -->
 <div class="section active" id="sec-spa">
   <div class="tiles tiles-3" id="spa-tiles">
-    <div class="tile clickable sel-blue" id="st-year" onclick="spaFilter(&#39;year&#39;,this,&#39;sel-blue&#39;)">
+    <div class="tile clickable sel-blue" id="st-year" onclick="spaFilter('year',this,'sel-blue')">
       <div class="tile-label">SPA this year</div>
       <div class="tile-split">
         <div class="tile-split-row"><span class="lbl">Count</span><span class="val blue" id="sv-year-c">—</span></div>
         <div class="tile-split-row"><span class="lbl">Value</span><span class="val blue" id="sv-year-v">—</span></div>
       </div>
     </div>
-    <div class="tile clickable" id="st-open" onclick="spaFilter(&#39;open&#39;,this,&#39;sel-red&#39;)">
+    <div class="tile clickable" id="st-open" onclick="spaFilter('open',this,'sel-red')">
       <div class="tile-label">Open SPA</div>
       <div class="tile-split">
         <div class="tile-split-row"><span class="lbl">Count</span><span class="val red" id="sv-open-c">—</span></div>
         <div class="tile-split-row"><span class="lbl">Value</span><span class="val red" id="sv-open-v">—</span></div>
       </div>
     </div>
-    <div class="tile clickable" id="st-exp" onclick="spaFilter(&#39;expiring&#39;,this,&#39;sel-amber&#39;)">
+    <div class="tile clickable" id="st-exp" onclick="spaFilter('expiring',this,'sel-amber')">
       <div class="tile-label">Expiring soon</div>
       <div class="tile-split">
         <div class="tile-split-row"><span class="lbl">Count</span><span class="val amber" id="sv-exp-c">—</span></div>
@@ -169,7 +168,7 @@ tr:hover td{background:#f9fafb;}
 <!-- OOH -->
 <div class="section" id="sec-ooh">
   <div class="tiles tiles-4" id="ooh-tiles">
-    <div class="tile clickable sel-blue" id="ot-all" onclick="oohFilter(&#39;all&#39;,this,&#39;sel-blue&#39;)">
+    <div class="tile clickable sel-blue" id="ot-all" onclick="oohFilter('all',this,'sel-blue')">
       <div class="tile-label">Total OOH</div>
       <div class="tile-dual">
         <div class="tile-dual-item"><div class="tile-value blue" id="ov-all">—</div><div class="tile-sub">Value</div></div>
@@ -177,7 +176,7 @@ tr:hover td{background:#f9fafb;}
         <div class="tile-dual-item"><div class="tile-value blue" id="oc-all">—</div><div class="tile-sub">Orders</div></div>
       </div>
     </div>
-    <div class="tile clickable" id="ot-cust" onclick="oohFilter(&#39;cust&#39;,this,&#39;sel-green&#39;)">
+    <div class="tile clickable" id="ot-cust" onclick="oohFilter('cust',this,'sel-green')">
       <div class="tile-label">Against cust. order</div>
       <div class="tile-dual">
         <div class="tile-dual-item"><div class="tile-value green" id="ov-cust">—</div><div class="tile-sub">Value</div></div>
@@ -185,7 +184,7 @@ tr:hover td{background:#f9fafb;}
         <div class="tile-dual-item"><div class="tile-value green" id="oc-cust">—</div><div class="tile-sub">Orders</div></div>
       </div>
     </div>
-    <div class="tile clickable" id="ot-stk" onclick="oohFilter(&#39;stk&#39;,this,&#39;sel-amber&#39;)">
+    <div class="tile clickable" id="ot-stk" onclick="oohFilter('stk',this,'sel-amber')">
       <div class="tile-label">Stock orders</div>
       <div class="tile-dual">
         <div class="tile-dual-item"><div class="tile-value amber" id="ov-stk">—</div><div class="tile-sub">Value</div></div>
@@ -193,7 +192,7 @@ tr:hover td{background:#f9fafb;}
         <div class="tile-dual-item"><div class="tile-value amber" id="oc-stk">—</div><div class="tile-sub">Orders</div></div>
       </div>
     </div>
-    <div class="tile clickable" id="ot-hr" onclick="oohFilter(&#39;hr&#39;,this,&#39;sel-purple&#39;)">
+    <div class="tile clickable" id="ot-hr" onclick="oohFilter('hr',this,'sel-purple')">
       <div class="tile-label">Hold Released</div>
       <div class="tile-dual">
         <div class="tile-dual-item"><div class="tile-value purple" id="ov-hr">—</div><div class="tile-sub">Value</div></div>
@@ -220,15 +219,15 @@ tr:hover td{background:#f9fafb;}
   </div>
   <div class="toolbar">
     <span class="sort-lbl">Category</span>
-    <button class="tbtn active" id="oc-comp" onclick="oohCat(&#39;Compressor&#39;,this)">Compressors</button>
-    <button class="tbtn" id="oc-dry" onclick="oohCat(&#39;Dryer&#39;,this)">Dryers</button>
-    <button class="tbtn" id="oc-filt" onclick="oohCat(&#39;Filter&#39;,this)">Filters</button>
-    <button class="tbtn" id="oc-all2" onclick="oohCat(&#39;all&#39;,this)">All</button>
+    <button class="tbtn active" id="oc-comp" onclick="oohCat('Compressor',this)">Compressors</button>
+    <button class="tbtn" id="oc-dry" onclick="oohCat('Dryer',this)">Dryers</button>
+    <button class="tbtn" id="oc-filt" onclick="oohCat('Filter',this)">Filters</button>
+    <button class="tbtn" id="oc-all2" onclick="oohCat('all',this)">All</button>
     <div class="tsep" id="ooh-grp-sep"></div>
     <span class="sort-lbl">Sort</span>
-    <button class="tbtn active" id="os-newest" onclick="oohSort(&#39;newest&#39;,this)">Newest first</button>
-    <button class="tbtn" id="os-oldest" onclick="oohSort(&#39;oldest&#39;,this)">Oldest first</button>
-    <button class="tbtn" id="os-group" onclick="oohSort(&#39;group&#39;,this)">Stock → Customer</button>
+    <button class="tbtn active" id="os-newest" onclick="oohSort('newest',this)">Newest first</button>
+    <button class="tbtn" id="os-oldest" onclick="oohSort('oldest',this)">Oldest first</button>
+    <button class="tbtn" id="os-group" onclick="oohSort('group',this)">Stock → Customer</button>
   </div>
   <div class="table-wrap"><table>
     <thead><tr><th>#</th><th>OA Date</th><th>Category</th><th>Model</th><th>Qty</th><th>Amount</th><th>Customer</th><th>Exp. Delivery</th><th>Allocated</th><th>Hold Release</th></tr></thead>
@@ -239,7 +238,7 @@ tr:hover td{background:#f9fafb;}
 <!-- ORDER INVOICED -->
 <div class="section" id="sec-invoiced">
   <div class="tiles tiles-2" id="inv-tiles">
-    <div class="tile clickable sel-blue" id="it-yr" onclick="invFilter(&#39;yr&#39;,this,&#39;sel-blue&#39;)">
+    <div class="tile clickable sel-blue" id="it-yr" onclick="invFilter('yr',this,'sel-blue')">
       <div class="tile-label">Invoiced — this year &amp; quarter</div>
       <div class="tile-split">
         <div class="tile-split-row"><span class="lbl">This year</span><span class="val blue" id="iv-yr-c">—</span></div>
@@ -247,7 +246,7 @@ tr:hover td{background:#f9fafb;}
         <div class="tile-split-row"><span class="lbl">Value (year)</span><span class="val blue" id="iv-yr-v">—</span></div>
       </div>
     </div>
-    <div class="tile clickable" id="it-mo" onclick="invFilter(&#39;mo&#39;,this,&#39;sel-green&#39;)">
+    <div class="tile clickable" id="it-mo" onclick="invFilter('mo',this,'sel-green')">
       <div class="tile-label">Invoiced — this month</div>
       <div class="tile-split">
         <div class="tile-split-row"><span class="lbl">Count</span><span class="val green" id="iv-mo-c">—</span></div>
@@ -257,14 +256,14 @@ tr:hover td{background:#f9fafb;}
   </div>
   <div class="toolbar">
     <span class="sort-lbl">Category</span>
-    <button class="tbtn active" id="ic-comp" onclick="invCat(&#39;Compressor&#39;,this)">Compressors</button>
-    <button class="tbtn" id="ic-dry" onclick="invCat(&#39;Dryer&#39;,this)">Dryers</button>
-    <button class="tbtn" id="ic-filt" onclick="invCat(&#39;Filter&#39;,this)">Filters</button>
-    <button class="tbtn" id="ic-all" onclick="invCat(&#39;all&#39;,this)">All</button>
+    <button class="tbtn active" id="ic-comp" onclick="invCat('Compressor',this)">Compressors</button>
+    <button class="tbtn" id="ic-dry" onclick="invCat('Dryer',this)">Dryers</button>
+    <button class="tbtn" id="ic-filt" onclick="invCat('Filter',this)">Filters</button>
+    <button class="tbtn" id="ic-all" onclick="invCat('all',this)">All</button>
     <div class="tsep"></div>
     <span class="sort-lbl">Sort</span>
-    <button class="tbtn active" id="is-newest" onclick="invSort(&#39;newest&#39;,this)">Newest first</button>
-    <button class="tbtn" id="is-oldest" onclick="invSort(&#39;oldest&#39;,this)">Oldest first</button>
+    <button class="tbtn active" id="is-newest" onclick="invSort('newest',this)">Newest first</button>
+    <button class="tbtn" id="is-oldest" onclick="invSort('oldest',this)">Oldest first</button>
   </div>
   <div class="table-wrap"><table>
     <thead><tr><th>#</th><th>Invoice Date</th><th>Category</th><th>Model</th><th>Customer</th><th>Amount</th><th>Location</th><th>MRC Type</th><th>Dispatched</th></tr></thead>
@@ -275,28 +274,28 @@ tr:hover td{background:#f9fafb;}
 <!-- STOCK -->
 <div class="section" id="sec-stock">
   <div class="tiles tiles-4" id="stk-tiles">
-    <div class="tile clickable sel-blue" id="stkt-all" onclick="stkLocFilter(&#39;all&#39;,this,&#39;sel-blue&#39;)">
+    <div class="tile clickable sel-blue" id="stkt-all" onclick="stkLocFilter('all',this,'sel-blue')">
       <div class="tile-label">All stock</div>
       <div class="tile-split">
         <div class="tile-split-row"><span class="lbl">Units</span><span class="val blue" id="stk-all-c">—</span></div>
         <div class="tile-split-row"><span class="lbl">Value</span><span class="val blue" id="stk-all-v">—</span></div>
       </div>
     </div>
-    <div class="tile clickable" id="stkt-mrc" onclick="stkLocFilter(&#39;MRC&#39;,this,&#39;sel-green&#39;)">
+    <div class="tile clickable" id="stkt-mrc" onclick="stkLocFilter('MRC',this,'sel-green')">
       <div class="tile-label">At MRC</div>
       <div class="tile-split">
         <div class="tile-split-row"><span class="lbl">Units</span><span class="val green" id="stk-mrc-c">—</span></div>
         <div class="tile-split-row"><span class="lbl">Value</span><span class="val green" id="stk-mrc-v">—</span></div>
       </div>
     </div>
-    <div class="tile clickable" id="stkt-mad" onclick="stkLocFilter(&#39;Madukkarai&#39;,this,&#39;sel-purple&#39;)">
+    <div class="tile clickable" id="stkt-mad" onclick="stkLocFilter('Madukkarai',this,'sel-purple')">
       <div class="tile-label">At Madukkarai</div>
       <div class="tile-split">
         <div class="tile-split-row"><span class="lbl">Units</span><span class="val purple" id="stk-mad-c">—</span></div>
         <div class="tile-split-row"><span class="lbl">Value</span><span class="val purple" id="stk-mad-v">—</span></div>
       </div>
     </div>
-    <div class="tile clickable" id="stkt-tr" onclick="stkLocFilter(&#39;Transit&#39;,this,&#39;sel-amber&#39;)">
+    <div class="tile clickable" id="stkt-tr" onclick="stkLocFilter('Transit',this,'sel-amber')">
       <div class="tile-label">In transit</div>
       <div class="tile-split">
         <div class="tile-split-row"><span class="lbl">Units</span><span class="val amber" id="stk-tr-c">—</span></div>
@@ -306,16 +305,16 @@ tr:hover td{background:#f9fafb;}
   </div>
   <div class="toolbar">
     <span class="sort-lbl">Category</span>
-    <button class="tbtn active" id="sc-comp" onclick="stkCat(&#39;Compressor&#39;,this)">Compressors</button>
-    <button class="tbtn" id="sc-dry" onclick="stkCat(&#39;Dryer&#39;,this)">Dryers</button>
-    <button class="tbtn" id="sc-filt" onclick="stkCat(&#39;Filter&#39;,this)">Filters</button>
-    <button class="tbtn" id="sc-all" onclick="stkCat(&#39;all&#39;,this)">All</button>
+    <button class="tbtn active" id="sc-comp" onclick="stkCat('Compressor',this)">Compressors</button>
+    <button class="tbtn" id="sc-dry" onclick="stkCat('Dryer',this)">Dryers</button>
+    <button class="tbtn" id="sc-filt" onclick="stkCat('Filter',this)">Filters</button>
+    <button class="tbtn" id="sc-all" onclick="stkCat('all',this)">All</button>
     <div class="tsep"></div>
     <span class="sort-lbl">Sort</span>
-    <button class="tbtn active" id="ss-oldest" onclick="stkSort(&#39;oldest&#39;,this)">Oldest first</button>
-    <button class="tbtn" id="ss-newest" onclick="stkSort(&#39;newest&#39;,this)">Newest first</button>
-    <button class="tbtn" id="ss-stk" onclick="stkSort(&#39;stock&#39;,this)">Stock first</button>
-    <button class="tbtn" id="ss-cust" onclick="stkSort(&#39;cust&#39;,this)">Customer first</button>
+    <button class="tbtn active" id="ss-oldest" onclick="stkSort('oldest',this)">Oldest first</button>
+    <button class="tbtn" id="ss-newest" onclick="stkSort('newest',this)">Newest first</button>
+    <button class="tbtn" id="ss-stk" onclick="stkSort('stock',this)">Stock first</button>
+    <button class="tbtn" id="ss-cust" onclick="stkSort('cust',this)">Customer first</button>
   </div>
   <div class="table-wrap"><table>
     <thead><tr><th>#</th><th>Purchase Date</th><th>Category</th><th>Model</th><th>Qty</th><th>Rate</th><th>Value</th><th>Customer Tagged</th><th>Location</th><th>MRC Type</th><th>Dispatched</th></tr></thead>
@@ -344,8 +343,8 @@ tr:hover td{background:#f9fafb;}
   <div class="se-grid" id="se-cards"></div>
   <div class="toolbar">
     <span class="sort-lbl">Sort</span>
-    <button class="tbtn active" id="cs-newest" onclick="coSort(&#39;newest&#39;,this)">Newest first</button>
-    <button class="tbtn" id="cs-oldest" onclick="coSort(&#39;oldest&#39;,this)">Oldest first</button>
+    <button class="tbtn active" id="cs-newest" onclick="coSort('newest',this)">Newest first</button>
+    <button class="tbtn" id="cs-oldest" onclick="coSort('oldest',this)">Oldest first</button>
   </div>
   <div class="table-wrap"><table>
     <thead><tr><th>#</th><th>Date</th><th>Customer</th><th>SE</th><th>Model</th><th>Qty</th><th>Basic Price</th><th>Disc%</th><th>TPC</th><th>SE Count</th></tr></thead>
@@ -429,6 +428,9 @@ let loadCount=0;
 function onLoaded(){
   loadCount++;
   if(loadCount<6)return;
+  finishLoad();
+}
+function finishLoad(){
   document.getElementById('loader').style.display='none';
   initSpaTiles();renderSpa();
   initOohTiles();renderOoh();
@@ -546,6 +548,14 @@ function loadSheets(){
     }).filter(r=>r.cust);
     onLoaded();
   }).catch(()=>onLoaded());
+
+  // Fallback: if fetches don't complete in 4 seconds, init anyway
+  setTimeout(()=>{
+    if(loadCount<6){
+      loadCount=6;
+      finishLoad();
+    }
+  },4000);
 }
 
 const SES=[
@@ -554,29 +564,8 @@ const SES=[
   {name:'Vijayakumar',code:'VK',cls:'ba'},
   {name:'Shanmugasundaram',code:'GS',cls:'bp'},
 ];
-const CO=[
-  {n:1,date:'28.08.2025',cust:'Pioneer Steels',se:'Senthil',model:'G11 - 7.5 P FM',qty:1,price:232000,disc:'—',tpc:'—'},
-  {n:2,date:'17.11.2025',cust:'Vishnu Chakra',se:'Saravanakumar',model:'G11 VSD P',qty:1,price:300000,disc:'—',tpc:'—'},
-  {n:3,date:'03.02.2026',cust:'Ranganathar',se:'Senthil',model:'GA 45 VSD PA',qty:1,price:1215000,disc:'26%',tpc:'₹20,000'},
-  {n:4,date:'16.02.2026',cust:'Arunkumar',se:'Vijayakumar',model:'G 22 VSD P',qty:1,price:475000,disc:'23%',tpc:'—'},
-  {n:5,date:'16.02.2026',cust:'SSM Mills',se:'Senthil',model:'G 22 VSD P',qty:1,price:475000,disc:'23%',tpc:'—'},
-  {n:6,date:'28.02.2026',cust:'Roots Poly',se:'Shanmugasundaram',model:'GA15 VSD+ FF',qty:1,price:655000,disc:'21%',tpc:'₹15,000'},
-  {n:7,date:'05.03.2026',cust:'Rossi/Sunthee',se:'Senthil',model:'GA 30 VSD iPM P',qty:1,price:825000,disc:'25%',tpc:'₹25,000'},
-  {n:8,date:'09.03.2026',cust:'SSM Mills',se:'Saravanakumar',model:'G15 VSD P',qty:1,price:300000,disc:'—',tpc:'—'},
-  {n:9,date:'10.03.2026',cust:'Supreme',se:'Vijayakumar',model:'GA45 VSD+ FF',qty:1,price:1760000,disc:'20%',tpc:'—'},
-  {n:10,date:'11.03.2026',cust:'Shrenic Spinners',se:'Senthil',model:'GA18 VSD+ P',qty:1,price:695000,disc:'21%',tpc:'₹10,000'},
-];
-const OUTSTANDING=[
-  {date:'28.10.2022',cust:'Nika Windoors',amt:66100,rem:'M/c'},
-  {date:'29.10.2024',cust:'Steer Engineering',amt:54280,rem:'Receiver'},
-  {date:'23.06.2025',cust:'Rajeshwari Weaving',amt:78000,rem:'M/c'},
-  {date:'27.06.2025',cust:'Mattic Box',amt:106800,rem:'M/c'},
-  {date:'05.11.2025',cust:'Craftsman Automation - Unit 3',amt:396480,rem:'Receiver'},
-  {date:'24.12.2025',cust:'A.K. Fabrics (Magilva)',amt:130000,rem:'M/c'},
-  {date:'06.02.2026',cust:'Mahle Electric',amt:399813,rem:'M/c, Dryer, Receiver'},
-  {date:'06.02.2026',cust:'Arbon Cleantech',amt:150960,rem:'M/c, Filter'},
-  {date:'20.02.2026',cust:'JCS Air Products',amt:1411300,rem:'M/c'},
-];
+
+
 
 // ── SPA ───────────────────────────────────────────────────────────────────────
 let spaF='year';
@@ -792,16 +781,18 @@ function initOutstanding(){
 }
 
 // ── TAB ───────────────────────────────────────────────────────────────────────
-function showTab(name,el){
+function showTab(name){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  el.classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
   document.getElementById('sec-'+name).classList.add('active');
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
-loadSheets();
+window.addEventListener('DOMContentLoaded',function(){
+  finishLoad();
+  loadSheets();
+});
 </script>
-</div>
-
-</body></html>
+</body>
+</html>
