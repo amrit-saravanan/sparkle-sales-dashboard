@@ -110,18 +110,18 @@ tr:hover td{background:#f9fafb;}
 
 <div class="header">
   <div class="header-inner">
-    <div class="logo"><img id="logo-img" alt="Sparkle AirPower" onerror="this.style.display='none';document.getElementById('logo-text').style.display='block'"/><span id="logo-text" style="display:none;font-size:18px;font-weight:700;color:#1a7fe8;font-family:Arial,sans-serif;">Sparkle AirPower</span></div>
+    <div class="logo" onclick="showTab('spa')" style="cursor:pointer"><img id="logo-img" alt="Sparkle AirPower" onerror="this.style.display='none';document.getElementById('logo-text').style.display='block'"/><span id="logo-text" style="display:none;font-size:18px;font-weight:700;color:#1a7fe8;font-family:Arial,sans-serif;">Sparkle AirPower</span></div>
     <div class="date-badge" id="live-date"></div>
   </div>
 </div>
 
 <div class="tabs">
   <div class="tabs-inner">
-    <div class="tab active" id="tab-spa" onclick="showTab('spa')">SPAs</div>
-    <div class="tab" id="tab-ooh" onclick="showTab('ooh')">Order on Hand</div>
+    <div class="tab active" id="tab-co" onclick="showTab('co')">Customer Orders</div>
     <div class="tab" id="tab-invoiced" onclick="showTab('invoiced')">Order Invoiced</div>
+    <div class="tab" id="tab-ooh" onclick="showTab('ooh')">Order on Hand</div>
     <div class="tab" id="tab-stock" onclick="showTab('stock')">Stock</div>
-    <div class="tab" id="tab-co" onclick="showTab('co')">Customer Orders</div>
+    <div class="tab" id="tab-spa" onclick="showTab('spa')">SPAs</div>
     <div class="tab" id="tab-outstanding" onclick="showTab('outstanding')">Mkt. Outstanding</div>
   </div>
 </div>
@@ -134,7 +134,7 @@ tr:hover td{background:#f9fafb;}
 <div class="main">
 
 <!-- SPAs -->
-<div class="section active" id="sec-spa">
+<div class="section" id="sec-spa">
   <div class="tiles tiles-3" id="spa-tiles">
     <div class="tile clickable" id="st-year" onclick="spaFilter('year',this,'sel-blue')">
       <div class="tile-label">SPA this year</div>
@@ -280,7 +280,7 @@ tr:hover td{background:#f9fafb;}
     <button class="tbtn" id="is-oldest" onclick="invSort('oldest',this)">Oldest first</button>
   </div>
   <div class="table-wrap"><table>
-    <thead><tr><th>#</th><th>Invoice Date</th><th>Category</th><th>Model</th><th>Customer</th><th>Amount</th><th>Location</th></tr></thead>
+    <thead><tr><th>#</th><th>Invoice Date</th><th>Model</th><th>Customer</th><th>Amount</th><th>Location</th><th>Category</th></tr></thead>
     <tbody id="inv-tbody"></tbody>
   </table></div>
 </div>
@@ -317,6 +317,15 @@ tr:hover td{background:#f9fafb;}
       </div>
     </div>
   </div>
+  <div class="tiles tiles-2" style="margin-bottom:10px;">
+    <div class="tile clickable" id="stkt-off" onclick="stkLocFilter('Office',this,'sel-teal')">
+      <div class="tile-label">At office</div>
+      <div class="tile-split">
+        <div class="tile-split-row"><span class="lbl">Units</span><span class="val teal" id="stk-off-c">—</span></div>
+        <div class="tile-split-row"><span class="lbl">Value</span><span class="val teal" id="stk-off-v">—</span></div>
+      </div>
+    </div>
+  </div>
   <div class="toolbar">
     <span class="sort-lbl">Category</span>
     <button class="tbtn active" id="sc-comp" onclick="stkCat('Compressor',this)">Compressors</button>
@@ -337,7 +346,7 @@ tr:hover td{background:#f9fafb;}
 </div>
 
 <!-- CUSTOMER ORDERS -->
-<div class="section" id="sec-co">
+<div class="section active" id="sec-co">
   <div class="tiles tiles-2" style="margin-bottom:12px;">
     <div class="tile">
       <div class="tile-label">Orders</div>
@@ -400,7 +409,7 @@ document.getElementById('live-date').textContent=today.toLocaleDateString('en-IN
 function pd(s){if(!s)return null;const p=s.split('.');if(p.length===3)return new Date(+p[2],+p[1]-1,+p[0]);return null;}
 function fa(n){if(n>=10000000)return '₹'+(n/10000000).toFixed(1)+'Cr';if(n>=100000)return '₹'+(n/100000).toFixed(1)+'L';if(n>=1000)return '₹'+(n/1000).toFixed(0)+'K';return '₹'+n.toLocaleString('en-IN');}
 function yn(v){return v?'<span class="badge bg">Yes</span>':'<span class="badge bgr">No</span>';}
-function locB(l){const lc=(l||'').toLowerCase().trim();if(lc==='transit')return '<span class="badge ba">Transit</span>';if(lc.startsWith('deliver'))return '<span class="badge bb">Delivered</span>';if(lc==='stock'||lc==='mrc'||lc==='mrc c'||lc==='mrc u'||lc==='madukkarai')return '<span class="badge bg">Stock</span>';return '<span class="badge bgr">'+(l||'—')+'</span>';}
+function locB(l){const lc=(l||'').toLowerCase().trim();if(lc==='transit')return '<span class="badge ba">Transit</span>';if(lc.startsWith('deliver'))return '<span class="badge bb">Delivered</span>';if(lc==='mrc'||lc==='mrc c'||lc==='mrc u')return '<span class="badge bg">MRC</span>';if(lc==='madukkarai')return '<span class="badge bp">Madukkarai</span>';if(lc==='office')return '<span class="badge bt">Office</span>';return '<span class="badge bgr">'+(l||'—')+'</span>';}
 function mrcType(l){const m=(l||'').toLowerCase().trim();if(m==='covered'||m==='mrc c')return '<span class="badge bg">Covered</span>';if(m==='open'||m==='uncovered'||m==='mrc u')return '<span class="badge ba">Open</span>';if(m===''||m==='—'||!m)return '<span class="badge bgr">—</span>';return '<span class="badge bgr">'+l+'</span>';}
 function catB(c){if(c==='Compressor')return '<span class="badge bb">Comp.</span>';if(c==='Dryer')return '<span class="badge ba">Dryer</span>';if(c==='Filter')return '<span class="badge bp">Filter</span>';if(c==='Receiver')return '<span class="badge bgr">Recv.</span>';return '<span class="badge bgr">'+c+'</span>';}
 function isMRC(l){return l==='MRC C'||l==='MRC U';}
@@ -759,7 +768,7 @@ function renderInv(){
     return true;
   }).sort((a,b)=>invS2==='newest'?(pd(b.date)||0)-(pd(a.date)||0):(pd(a.date)||0)-(pd(b.date)||0));
   document.getElementById('inv-tbody').innerHTML=rows.length
-    ?rows.map((r,i)=>`<tr><td class="num-col">${i+1}</td><td class="mono">${r.date}</td><td>${catB(r.cat)}</td><td>${r.model}</td><td>${r.cust}</td><td class="amt">${fa(r.amt)}</td><td>${locB(r.loc2)}</td></tr>`).join('')
+    ?rows.map((r,i)=>`<tr><td class="num-col">${i+1}</td><td class="mono">${r.date}</td><td>${r.model}</td><td>${r.cust}</td><td class="amt">${fa(r.amt)}</td><td>${locB(r.loc2)}</td><td>${catB(r.cat)}</td></tr>`).join('')
     :'<tr class="empty-row"><td colspan="9">No records</td></tr>';
 }
 function initInvTiles(){
@@ -785,9 +794,10 @@ function renderStk(){
   let rows=STK.filter(r=>{
     if((r.l||'').toLowerCase().startsWith('deliver')) return false; // exclude delivered
     if(stkCatF2!=='all'&&r.cat!==stkCatF2) return false;
-    if(stkLocF==='MRC') return isMRC(r.l)||(r.l||'').toLowerCase()==='mrc';
-    if(stkLocF==='Madukkarai') return (r.l||'').toLowerCase()==='madukkarai';
-    if(stkLocF==='Transit') return (r.l||'').toLowerCase()==='transit';
+    if(stkLocF==='MRC') return stkLocMatch(r.l,'MRC');
+    if(stkLocF==='Madukkarai') return stkLocMatch(r.l,'Madukkarai');
+    if(stkLocF==='Transit') return stkLocMatch(r.l,'Transit');
+    if(stkLocF==='Office') return stkLocMatch(r.l,'Office');
     return true;
   });
   if(stkS2==='oldest') rows.sort((a,b)=>(pd(a.date)||0)-(pd(b.date)||0));
@@ -806,15 +816,23 @@ function renderStk(){
   }
   document.getElementById('stk-tbody').innerHTML=html||'<tr class="empty-row"><td colspan="11">No records</td></tr>';
 }
+function stkLocMatch(l,loc){
+  const lc=(l||'').toLowerCase().trim();
+  if(loc==='MRC') return lc==='mrc'||lc==='mrc c'||lc==='mrc u';
+  if(loc==='Madukkarai') return lc==='madukkarai';
+  if(loc==='Transit') return lc==='transit';
+  if(loc==='Office') return lc==='office';
+  return false;
+}
 function initStkTiles(){
-  // Tile values always compressors only
   const compStk=STK.filter(r=>r.cat==='Compressor');
-  const sum=arr=>arr.reduce((s,r)=>s+r.val,0);
+  // Use rate as value (rate = value per unit)
+  const sum=arr=>arr.reduce((s,r)=>s+(r.rate*r.qty),0);
   const cnt=arr=>arr.reduce((s,r)=>s+r.qty,0);
   const compStkActive=compStk.filter(r=>!(r.l||'').toLowerCase().startsWith('deliver'));
-  const mrc=compStkActive.filter(r=>isMRC(r.l)||(r.l||'').toLowerCase()==='mrc');
-  const mad=compStkActive.filter(r=>(r.l||'').toLowerCase()==='madukkarai');
-  const tr=compStkActive.filter(r=>(r.l||'').toLowerCase()==='transit');
+  const mrc=compStkActive.filter(r=>stkLocMatch(r.l,'MRC'));
+  const mad=compStkActive.filter(r=>stkLocMatch(r.l,'Madukkarai'));
+  const tr=compStkActive.filter(r=>stkLocMatch(r.l,'Transit'));
   document.getElementById('stk-all-c').textContent=cnt(compStkActive);
   document.getElementById('stk-all-v').textContent=fa(sum(compStkActive));
   document.getElementById('stk-mrc-c').textContent=cnt(mrc);
@@ -823,6 +841,9 @@ function initStkTiles(){
   document.getElementById('stk-mad-v').textContent=fa(sum(mad));
   document.getElementById('stk-tr-c').textContent=cnt(tr);
   document.getElementById('stk-tr-v').textContent=fa(sum(tr));
+  const off=compStkActive.filter(r=>stkLocMatch(r.l,'Office'));
+  document.getElementById('stk-off-c').textContent=cnt(off);
+  document.getElementById('stk-off-v').textContent=fa(sum(off));
 }
 
 // ── CUSTOMER ORDERS ──────────────────────────────────────────────────────────
@@ -832,10 +853,11 @@ function seFilter(code,card){coSE=coSE===code?'all':code;document.querySelectorA
 function renderCo(){
   let rows=CO.filter(r=>{if(coSE==='all')return true;const s=getSEByCode(r.se);return s&&s.code===coSE;}).sort((a,b)=>coS2==='newest'?(pd(b.date)||0)-(pd(a.date)||0):(pd(a.date)||0)-(pd(b.date)||0));
   const run={};
+  const total=rows.length;
   document.getElementById('co-tbody').innerHTML=rows.map((r,i)=>{
     const se=getSEByCode(r.se)||{code:r.se||'?',cls:'bgr'};
     if(!run[se.code])run[se.code]=0;run[se.code]++;
-    return `<tr><td class="num-col">${i+1}</td><td class="mono">${r.date}</td><td>${r.cust}</td><td>${r.se}</td><td>${r.model}</td><td>${r.qty}</td><td class="amt">${fa(r.price)}</td><td>${r.disc}</td><td>${r.tpc}</td><td><span class="badge ${se.cls}">${se.code} #${run[se.code]}</span></td></tr>`;
+    return `<tr><td class="num-col">${total-i}</td><td class="mono">${r.date}</td><td>${r.cust}</td><td>${r.se}</td><td>${r.model}</td><td>${r.qty}</td><td class="amt">${fa(r.price)}</td><td>${r.disc}</td><td>${r.tpc}</td><td><span class="badge ${se.cls}">${se.code} #${run[se.code]}</span></td></tr>`;
   }).join('')||'<tr class="empty-row"><td colspan="10">No orders</td></tr>';
 }
 function initCo(){
